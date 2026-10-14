@@ -16,7 +16,7 @@ jobs:
 
       - name: Extract project
         run: |
-          unzip -o OpenCamLink-source-v0.2-ready-for-cloud-build.zip
+          unzip -o OpenCamLink-source-v0.3-public-safe.zip
           ls -la OpenCamLink
 
       - name: Set up Java 17
