@@ -16,7 +16,7 @@ jobs:
 
       - name: Extract project
         run: |
-          unzip -o OpenCamLink-source-v0.6-public-safe.zip
+          unzip -o OpenCamLink-source-v0.7-public-safe.zip
           ls -la OpenCamLink
 
       - name: Set up Java 17
