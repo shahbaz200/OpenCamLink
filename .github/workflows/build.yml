@@ -25,14 +25,28 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
-
       - name: Install Android SDK 35
+        shell: bash
         run: |
-          yes | sdkmanager "platforms;android-35" "build-tools;35.0.0" "platform-tools"
+          SDK_ROOT="${ANDROID_SDK_ROOT:-$ANDROID_HOME}"
+          echo "Android SDK: $SDK_ROOT"
 
-      - name: Set up Gradle
+          SDKMANAGER="$(find "$SDK_ROOT/cmdline-tools" -type f -name sdkmanager | head -n 1)"
+
+          if [ -z "$SDKMANAGER" ]; then
+            SDKMANAGER="$(command -v sdkmanager)"
+          fi
+
+          echo "sdkmanager: $SDKMANAGER"
+
+          yes | "$SDKMANAGER" --licenses >/dev/null || true
+
+          "$SDKMANAGER" \
+            "platform-tools" \
+            "platforms;android-35" \
+            "build-tools;35.0.0"
+
+      - name: Set up Gradle 8.9
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.9'
@@ -44,10 +58,12 @@ jobs:
       - name: Prepare APK
         run: |
           mkdir -p output
-          cp OpenCamLink/app/build/outputs/apk/debug/app-debug.apk output/OpenCamLink-v0.2.apk
+          cp OpenCamLink/app/build/outputs/apk/debug/app-debug.apk \
+             output/OpenCamLink-v0.2.apk
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: OpenCamLink-APK
           path: output/OpenCamLink-v0.2.apk
+          if-no-files-found: error
